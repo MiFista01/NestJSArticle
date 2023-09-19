@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %>
+<body>
+    <%- include('../partials/header') %>
+    <main>
+        <div class="d-flex w-100 justify-content-around">
+            <% movies.forEach(element => { %>
+                <div class="card align-self-stretch" style="width: 14%;">
+                    <img src="<%= element.poster %>" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= element.title %></h5>
+                      <p class="card-text"><%= element.plot %></p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>
