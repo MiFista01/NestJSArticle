@@ -6,6 +6,9 @@ import { articlesSchema } from './schemas/articles.schemas';
 import { ArticlesService } from './articles/articles.service';
 import { ArticlesController } from './articles/articles.controller';
 import { ArticlesModule } from './articles/articles.module';
+import { UsersService } from './users/users.service';
+import { UsersController } from './users/users.controller';
+import { UsersModule } from './users/users.module';
 
 
 @Module({
@@ -15,8 +18,9 @@ import { ArticlesModule } from './articles/articles.module';
     ),
     MongooseModule.forFeature([{ name: 'Articles', schema: articlesSchema }]),
     ArticlesModule,
+    UsersModule,
   ],
-  controllers: [AppController, ArticlesController],
-  providers: [AppService, ArticlesService],
+  controllers: [AppController, ArticlesController, UsersController],
+  providers: [AppService, ArticlesService, UsersService],
 })
 export class AppModule {}
