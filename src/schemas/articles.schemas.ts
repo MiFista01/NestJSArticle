@@ -27,6 +27,7 @@ export const articlesSchema = new Schema<Articles>(
   {
     timestamps: true,
     collection: 'stat',
+    versionKey: false
   }
 );
 

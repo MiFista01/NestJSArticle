@@ -15,6 +15,6 @@ import {PaginationMiddleware} from '../pagination/pagination.middleware'
 })
 export class ArticlesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(PaginationMiddleware).forRoutes('articles/pages/:page'); // Примените middleware к определенным маршрутам
+    consumer.apply(PaginationMiddleware).forRoutes('articles/pages/:page'); 
   }
 }

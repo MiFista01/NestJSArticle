@@ -40,4 +40,3 @@ export class ArticlesController {
         await this.articlesService.deleteArticle(id);
     }
 }
-// {status: boolean, text:string}
