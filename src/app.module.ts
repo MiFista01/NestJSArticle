@@ -11,6 +11,9 @@ import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { usersSchema } from './schemas/users.schemas';
 import { SubscribeService } from './subscribe/subscribe.service';
+import { SubscribeController } from './subscribe/subscribe.controller';
+import { SubscribeModule } from './subscribe/subscribe.module';
+import { subscibeSchema } from './schemas/subscribe.schemas';
 
 
 @Module({
@@ -20,10 +23,12 @@ import { SubscribeService } from './subscribe/subscribe.service';
     ),
     MongooseModule.forFeature([{ name: 'Articles', schema: articlesSchema }]),
     MongooseModule.forFeature([{ name: 'Users', schema: usersSchema }]),
+    MongooseModule.forFeature([{ name: 'Subscribe', schema: subscibeSchema }]),
     ArticlesModule,
     UsersModule,
+    SubscribeModule,
   ],
-  controllers: [AppController, ArticlesController, UsersController],
+  controllers: [AppController, ArticlesController, UsersController, SubscribeController],
   providers: [AppService, ArticlesService, UsersService, SubscribeService],
 })
 export class AppModule {}

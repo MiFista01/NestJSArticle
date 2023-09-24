@@ -16,8 +16,8 @@ export class UsersService {
   }
 
   async findUserById(id: string): Promise<Users | null> {
-    const article = await this.userModel.findById(id)
-    return article
+    const user = await this.userModel.findById(id)
+    return user
   }
 
   async findAllUsers(): Promise<Users[]> {
@@ -34,8 +34,8 @@ export class UsersService {
             $match: {
                 $or: [
                     { name: { $regex: new RegExp(search, 'i') } },
-                    // { email: { $in: [new RegExp(search, 'i')] } },
-                    // { bio: { $regex: new RegExp(search, 'i') } }
+                    { email: { $regex: new RegExp(search, 'i') } },
+                    { bio: { $regex: new RegExp(search, 'i') } }
                 ]
             }
         }

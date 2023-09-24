@@ -17,12 +17,14 @@ export class ArticlesService {
   async findArticleById(id: string): Promise<Articles | null> {
     const article = await this.articleModel.aggregate([
         { $match: {"_id": new mongoose.Types.ObjectId(id)} },
-        {$lookup:
+        {
+          $lookup:
             { 
-                from: 'user',
-                localField: 'author',
-                foreignField: '_id',
-                as: 'author' }
+              from: 'user',
+              localField: 'author',
+              foreignField: '_id',
+              as: 'author' 
+            }
         },
         {
           $lookup: {
