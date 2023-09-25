@@ -6,7 +6,6 @@ export interface Users extends Document {
   bio:string;
   image: string;
   password:string;
-  jwttoken:string;
 }
 
 export const usersSchema = new Schema<Users>(
@@ -16,7 +15,6 @@ export const usersSchema = new Schema<Users>(
     bio: { type: String, required: false },
     image: { type: String, required: false, default: 'defaultico.png'},
     password:{type: String, required: true},
-    jwttoken:{type: String, required: false, default: ''}
   },
   {
     timestamps: false,

@@ -2,16 +2,16 @@ import { Body, Controller, Get, Param, Post, Delete, Put, Redirect } from '@nest
 import { UsersService } from './users.service';
 import { Users } from 'src/schemas/users.schemas';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
-    @Get()
-    async Users(@Param("page") page:string): Promise<{ articles: Users[] }> {
-        const articles = await this.usersService.findAllUsers();
-        return { articles }; 
+    @Get("/all")
+    async Users(@Param("page") page:string): Promise<{ users: Users[] }> {
+        const users = await this.usersService.findAllUsers();
+        return { users }; 
     }
-    @Get(":id")
+    @Get("entity/:id")
     async User(@Param("id") id:string): Promise<{ user: Users }| null> {
         const user = await this.usersService.findUserById(id);
         return { user }; 

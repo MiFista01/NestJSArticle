@@ -8,8 +8,8 @@ export class SubscribeService {
     constructor(
         @InjectModel('Subscribe') private readonly subscribeModel: Model<Subscribe>,
     ) { }
-    async createSubscribe(userData: Subscribe): Promise<Subscribe> {
-        const newSubscribe = new this.subscribeModel(userData);
+    async createSubscribe(subData: Subscribe): Promise<Subscribe> {
+        const newSubscribe = new this.subscribeModel(subData);
         return await newSubscribe.save();
     }
     
@@ -17,7 +17,6 @@ export class SubscribeService {
         const subscribe = await this.subscribeModel.findById(id)
         return subscribe
     }
-    
     async findAllSubscribes(): Promise<Subscribe[]> {
         const subscribes = await this.subscribeModel.find().exec()
         return subscribes
@@ -26,51 +25,41 @@ export class SubscribeService {
         const count = await this.subscribeModel.countDocuments().exec()
         return count
     }
-    async searchSubscribes(search: string): Promise<Subscribe[]> {
+    async searchSubscribes(field:string, value:string): Promise<{subscribes:Subscribe[], count:number}> {
+        const queryMatch = {}
+        let searchField:string
+        if(field == "user"){
+            searchField = field+".name"
+        }else if(field == "sub"){
+            searchField = field+".price"
+        }
+        queryMatch[searchField] = new RegExp(value, "i")
         const subscribes = await this.subscribeModel.aggregate([
             {
                 $lookup:{
                     from: 'user',
-                    localField: 'id_user',
+                    localField: 'user_id',
                     foreignField: '_id',
                     as: 'user'
                 }
             },
-            {
-                $match: {
-                    $or: [
-                        { "user.name": { $regex: new RegExp(search, 'i') } },
-                        { "user.email": { $regex: new RegExp(search, 'i') } },
-                    ]
-                }
-            }
-        ]).exec();
-        return subscribes;
-    }
-    async searchSubscribesFromTypes(search: number): Promise<Subscribe[]> {
-        const subscribesMod:Subscribe[] = await this.subscribeModel.aggregate([
             {
                 $lookup:{
-                    from: 'user',
-                    localField: 'id_user',
+                    from: 'subscribe_type',
+                    localField: 'sub_id',
                     foreignField: '_id',
-                    as: 'user'
+                    as: 'subscribe'
                 }
             },
             {
-                $match: {
-                    type:search
-                }
+                $match: queryMatch
             },
             {
-                $count: 'subscribesCount'
+                $project:{user_id:0, sub_id:0}
             }
-        ]);
-        const [subscribes, [{ subscribesCount }]] = await Promise.all([
-            subscribesMod.exec(),
-            subscribesMod
-        ]);
-        return subscribes;
+        ]).exec();
+        const count = subscribes.length
+        return {subscribes, count};
     }
     async updateSubscribe(id: string, updatedData: Partial<Subscribe>,): Promise<Subscribe | null> {
         return await this.subscribeModel

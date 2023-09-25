@@ -10,10 +10,17 @@ import { UsersService } from './users/users.service';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { usersSchema } from './schemas/users.schemas';
-import { SubscribeService } from './subscribe/subscribe.service';
-import { SubscribeController } from './subscribe/subscribe.controller';
+import { CommentsController } from './comments/comments.controller';
+import { CommentsService } from './comments/comments.service';
+import { CommentsModule } from './comments/comments.module';
+import { commentsSchema } from './schemas/comments.schemas';
+import { subscribeSchema } from './schemas/subscribe.schemas';
 import { SubscribeModule } from './subscribe/subscribe.module';
-import { subscibeSchema } from './schemas/subscribe.schemas';
+import { SubscribeController } from './subscribe/subscribe.controller';
+import { SubscribeService } from './subscribe/subscribe.service';
+import { subscribeTypeSchema } from './schemas/subscribe_type.schemas';
+import { SubscribeTypeService } from './subscribeType/subscribeType.service';
+import { SubscribeTypeModule } from './subscribeType/subscribeType.module';
 
 
 @Module({
@@ -23,12 +30,15 @@ import { subscibeSchema } from './schemas/subscribe.schemas';
     ),
     MongooseModule.forFeature([{ name: 'Articles', schema: articlesSchema }]),
     MongooseModule.forFeature([{ name: 'Users', schema: usersSchema }]),
-    MongooseModule.forFeature([{ name: 'Subscribe', schema: subscibeSchema }]),
+    MongooseModule.forFeature([{ name: 'Comments', schema: commentsSchema }]),
+    MongooseModule.forFeature([{ name: 'Subscribe', schema: subscribeSchema }]),
+    MongooseModule.forFeature([{ name: 'SubscribeType', schema: subscribeTypeSchema }]),
     ArticlesModule,
     UsersModule,
-    SubscribeModule,
+    CommentsModule,
+    SubscribeModule
   ],
-  controllers: [AppController, ArticlesController, UsersController, SubscribeController],
-  providers: [AppService, ArticlesService, UsersService, SubscribeService],
+  controllers: [AppController, ArticlesController, UsersController, CommentsController, SubscribeController],
+  providers: [AppService, ArticlesService, UsersService, CommentsService, SubscribeService, SubscribeTypeService],
 })
 export class AppModule {}
