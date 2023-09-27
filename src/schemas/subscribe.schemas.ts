@@ -1,22 +1,22 @@
-import { Schema, Document, model, ObjectId   } from 'mongoose';
+import { Schema, Document, model, Types } from 'mongoose';
 
 export interface Subscribe extends Document {
-  id_user: ObjectId;
-  sub_id: ObjectId;
+  user_id: Types.ObjectId;
+  sub_id: Types.ObjectId;
   start: Date;
-  monthEnd:Date;
+  monthEnd: Date;
   subscribeEnd: Date;
-  countArticle: number;
+  countArticles: number;
 }
 
 export const subscribeSchema = new Schema<Subscribe>(
   {
-    id_user: { type: Schema.Types.ObjectId, required: true, ref: 'user' },
+    user_id: { type: Schema.Types.ObjectId, required: true, ref: 'user' },
     sub_id: { type: Schema.Types.ObjectId, required: true, ref: 'subscribe_type' },
     start: { type: Date, required: true },
     monthEnd: { type: Date, required: true },
     subscribeEnd: { type: Date, required: true },
-    countArticle:{type: Number, required: true}
+    countArticles: { type: Number, required: true }
   },
   {
     timestamps: false,

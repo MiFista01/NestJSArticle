@@ -8,7 +8,7 @@ export class SubscribeService {
     constructor(
         @InjectModel('Subscribe') private readonly subscribeModel: Model<Subscribe>,
     ) { }
-    async createSubscribe(subData: Subscribe): Promise<Subscribe> {
+    async createSubscribe(subData: {}): Promise<Subscribe> {
         const newSubscribe = new this.subscribeModel(subData);
         return await newSubscribe.save();
     }
