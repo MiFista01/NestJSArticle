@@ -23,8 +23,15 @@ export class UsersController {
     }
     @Post()
     async CreateUser(@Body() formData: any) {
-        const user = await this.usersService.createUser(formData);
-        return user
+        console.log({
+            name: {value:formData.name, ec: false},
+            email: {value:formData.email, ec: false}})
+        const findUser = await this.usersService.searchUsers({
+            name: {value:formData.name, ec: false},
+            email: {value:formData.email, ec: false}})
+        console.log(findUser)
+        // const user = await this.usersService.createUser(formData);
+        // return user
     }
     @Put()
     async UpdateUser(@Body() formData: any) {

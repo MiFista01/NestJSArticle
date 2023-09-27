@@ -28,15 +28,36 @@ export class UsersService {
     const count = await this.userModel.countDocuments().exec()
     return count
   }
-  async searchUsers(search: string): Promise<Users[]> {
+  async searchUsers(search: 
+    {name?:{value:string, ec:boolean},
+    email?:{value:string, ec:boolean},
+    bio?:{value:string, ec:boolean}}): Promise<Users[]> {
+    let queryMatch = []
+    if (search.name.value !== undefined) {
+      if(search.name.ec){
+        queryMatch.push({ name: { $regex: new RegExp(search.name.value, 'i') } })
+      }else{
+        queryMatch.push({ name: search.name.value})
+      }
+    }
+    if(search.email.value !== undefined) {
+      if(search.email.ec){
+        queryMatch.push({ name: { $regex: new RegExp(search.email.value, 'i') } })
+      }else{
+        queryMatch.push({ name: search.email.value})
+      }
+    }
+    if(search.bio.value !== undefined) {
+      if(search.bio.ec){
+        queryMatch.push({ name: { $regex: new RegExp(search.bio.value, 'i') } })
+      }else{
+        queryMatch.push({ name: search.bio.value})
+      }
+    }
     const users = await this.userModel.aggregate([
         {
             $match: {
-                $or: [
-                    { name: { $regex: new RegExp(search, 'i') } },
-                    { email: { $regex: new RegExp(search, 'i') } },
-                    { bio: { $regex: new RegExp(search, 'i') } }
-                ]
+                $or: queryMatch
             }
         }
     ]).exec();

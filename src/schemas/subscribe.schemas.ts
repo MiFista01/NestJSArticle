@@ -11,8 +11,8 @@ export interface Subscribe extends Document {
 
 export const subscribeSchema = new Schema<Subscribe>(
   {
-    user_id: { type: Schema.Types.ObjectId, required: true, ref: 'user' },
-    sub_id: { type: Schema.Types.ObjectId, required: true, ref: 'subscribe_type' },
+    user_id: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    sub_id: { type: Schema.Types.ObjectId, required: true, ref: 'SubscribeType' },
     start: { type: Date, required: true },
     monthEnd: { type: Date, required: true },
     subscribeEnd: { type: Date, required: true },

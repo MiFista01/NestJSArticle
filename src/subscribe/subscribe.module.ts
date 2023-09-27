@@ -5,11 +5,13 @@ import { SubscribeService } from './subscribe.service';
 import { subscribeSchema } from 'src/schemas/subscribe.schemas';
 import { SubscribeTypeService } from 'src/subscribeType/subscribeType.service';
 import { subscribeTypeSchema } from 'src/schemas/subscribe_type.schemas';
+import { usersSchema } from 'src/schemas/users.schemas';
 
 @Module({
     imports: [
       MongooseModule.forFeature([{ name: 'Subscribe', schema: subscribeSchema }]),
       MongooseModule.forFeature([{ name: 'SubscribeType', schema: subscribeTypeSchema }]),
+      MongooseModule.forFeature([{ name: 'User', schema: usersSchema }]),
       SubscribeModule,
     ],
     controllers: [SubscribeController],
