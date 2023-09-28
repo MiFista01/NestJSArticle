@@ -11,7 +11,7 @@ export class CommentsService {
 
   async createComment(userData: Comments): Promise<Comments> {
     const newComment = new this.commentModel(userData);
-    return await newComment.save();
+    return (await newComment.save()).populate("author");
   }
 
   async findCommentById(id: string): Promise<Comments | null> {
@@ -56,16 +56,28 @@ export class CommentsService {
     return Comments
   }
 
-  async searchComments(field: string, value:string): Promise<{comments:Comments[], count:number}> {
-    const matchQuery = {};
-    let searchField:string
-    if (field === "author"){
-      searchField = field+".name"
+  async searchComments(field: [string], key:[string], value:[string]): Promise<{comments:Comments[], count:number}> {
+    const queryMatchArray = []
+    let queryMatch = {}
+    if(field.length == key.length && value.length) {
+      for (let index = 0; index < field.length; index++) {
+          if (key[index] != ""){
+              if(key[index].includes("_id")){
+                  queryMatch[field[index]+"."+key[index]] = new mongoose.Types.ObjectId(value[index])
+              }else{
+                queryMatch[field[index]+"."+key[index]] = new RegExp(value[index], "i")
+              }
+            }else{
+              if(field[index].includes("_id")){
+                queryMatch[field[index]] = new mongoose.Types.ObjectId(value[index])
+              }else{
+                queryMatch[field[index]] = new RegExp(value[index], "i")
+              }
+            }
+          queryMatchArray.push(queryMatch)
+          queryMatch = {}
+      }
     }
-    else if (field === "article"){
-      searchField = field+".title"
-    }
-    matchQuery[searchField] = { $regex: new RegExp(value, 'i') };
     const comments = await this.commentModel.aggregate([
       {
         $lookup:
@@ -86,7 +98,9 @@ export class CommentsService {
             }
       },
       {
-        $match: matchQuery
+        $match: {
+          $or: queryMatchArray
+        }
       }
     ]).exec();
     const count = comments.length;

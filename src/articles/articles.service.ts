@@ -66,7 +66,28 @@ export class ArticlesService {
     const count = await this.articleModel.countDocuments().exec()
     return count
   }
-  async searchArticles(search: string): Promise<Articles[]> {
+  async searchArticles(field: [string], key:[string], value:[string]): Promise<{articles:Articles[], count:number}> {
+    const queryMatchArray = []
+    let queryMatch = {}
+    if(field.length == key.length && value.length) {
+      for (let index = 0; index < field.length; index++) {
+          if (key[index] != ""){
+              if(key[index].includes("_id")){
+                  queryMatch[field[index]+"."+key[index]] = new mongoose.Types.ObjectId(value[index])
+              }else{
+                queryMatch[field[index]+"."+key[index]] = new RegExp(value[index], "i")
+              }
+            }else{
+              if(field[index].includes("_id")){
+                queryMatch[field[index]] = new mongoose.Types.ObjectId(value[index])
+              }else{
+                queryMatch[field[index]] = new RegExp(value[index], "i")
+              }
+            }
+          queryMatchArray.push(queryMatch)
+          queryMatch = {}
+      }
+    }
     const articles = await this.articleModel.aggregate([
       {
         $lookup: {
@@ -76,33 +97,27 @@ export class ArticlesService {
             as: 'author'
         }
       },
-        {
-            $match: {
-                $or: [
-                    { title: { $regex: new RegExp(search, 'i') } },
-                    { tags: { $in: [new RegExp(search, 'i')] } },
-                    { plot: { $regex: new RegExp(search, 'i') } },
-                    { slug: { $regex: new RegExp(search, 'i') } },
-                    { "author.name": { $regex: new RegExp(search, 'i') } }
-                ]
-            }
-        },
-        {
-            $lookup: {
-                from: 'user',
-                localField: 'UserLikes',
-                foreignField: '_id',
-                as: 'UserLikes'
-            }
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'UserLikes',
+          foreignField: '_id',
+          as: 'UserLikes'
         }
+      },
+      {
+          $match: {
+              $or: queryMatchArray
+          }
+      }
     ]).exec();
-
-    return articles;
+    let count = articles.length
+    return {articles, count};
   }
 
   async updateArticle(id: string, updatedData: Partial<Articles>,): Promise<Articles | null> {
     return await this.articleModel
-      .findByIdAndUpdate(id, updatedData, { new: true })
+      .findByIdAndUpdate(id, updatedData, { new: true }).populate({path:"author", select:"-password"})
       .exec();
   }
 

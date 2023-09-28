@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import * as dotenv from 'dotenv';
+
 import { articlesSchema } from './schemas/articles.schemas'; 
 import { ArticlesModule } from './articles/articles.module';
 import { UsersModule } from './users/users.module';
@@ -12,11 +14,11 @@ import { subscribeSchema } from './schemas/subscribe.schemas';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { subscribeTypeSchema } from './schemas/subscribe_type.schemas';
 
-
+dotenv.config()
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://admin:Password@dbcluster.yamub90.mongodb.net/db_stat',
+      process.env.DB,
     ),
     MongooseModule.forFeature([{ name: 'Articles', schema: articlesSchema }]),
     MongooseModule.forFeature([{ name: 'Users', schema: usersSchema }]),

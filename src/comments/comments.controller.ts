@@ -16,13 +16,17 @@ export class CommentsController {
         const comment = await this.usersService.findCommentById(id);
         return { comment }; 
     }
-    @Post("search") // поиск по полю автора или title у статьи
+    @Post("search") // поиск
     async Search(@Body() formData: any) {
-        const users = await this.usersService.searchComments(formData.field, formData.value);
+        const fields = formData.fields;
+        const keys = formData.keys;
+        const values = formData.values;
+        const users = await this.usersService.searchComments(fields, keys, values);
         return users
     }
     @Post() // создание комента
     async CreateComment(@Body() formData: any) {
+        formData.author = "6514172589fd5111967abd05"
         const comment = await this.usersService.createComment(formData);
         return comment
     }

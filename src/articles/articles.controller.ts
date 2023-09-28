@@ -22,7 +22,10 @@ export class ArticlesController {
     }
     @Post("search") // поиск статей почти по всем полям
     async Search(@Body() formData: any) {
-        const article = await this.articlesService.searchArticles(formData.search);
+        const fields = formData.fields;
+        const keys = formData.keys;
+        const values = formData.values;
+        const article = await this.articlesService.searchArticles(fields, keys, values);
         return article
     }
     @Post() // создание статей
