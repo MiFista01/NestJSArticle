@@ -16,12 +16,12 @@ export class UsersService {
   }
 
   async findUserById(id: string): Promise<Users | null> {
-    const user = await this.userModel.findById(id)
+    const user = await this.userModel.findById(id).select("-password").exec();
     return user
   }
 
   async findAllUsers(): Promise<Users[]> {
-    const Users = await this.userModel.find().exec()
+    const Users = await this.userModel.find().select("-password").exec()
     return Users
   }
   async findCountUsers(): Promise<number> {

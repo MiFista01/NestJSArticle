@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,6 +13,8 @@ import { commentsSchema } from './schemas/comments.schemas';
 import { subscribeSchema } from './schemas/subscribe.schemas';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { subscribeTypeSchema } from './schemas/subscribe_type.schemas';
+import { RegAuthCheckUserModule } from './reg_auth_check_user/reg_auth_check_user.module';
+import { CheckAuthMiddleware } from './check-auth/check-auth.middleware';
 
 dotenv.config()
 @Module({
@@ -33,4 +35,11 @@ dotenv.config()
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule{
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CheckAuthMiddleware).forRoutes('user/*');
+    consumer.apply(CheckAuthMiddleware).forRoutes('article/*');
+    consumer.apply(CheckAuthMiddleware).forRoutes('comment/*');
+    consumer.apply(CheckAuthMiddleware).forRoutes('subscribe/*');
+  }
+}
