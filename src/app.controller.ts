@@ -13,5 +13,9 @@ export class AppController {
     const articles = await this.appService.findRandomArticles(5);
     return { articles }; 
   }
+  @Get("error_auth")
+  async ErrorAuth(): Promise<string> {
+    return "oh oh oh, LOGOUT!"; 
+  }
 }
 

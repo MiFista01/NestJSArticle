@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Delete, Put, Redirect } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, Put, Redirect, UseGuards } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Articles } from 'src/schemas/articles.schemas';
 
@@ -12,6 +12,7 @@ export class ArticlesController {
             const articles = await this.articlesService.findAllArticlesPages(Number(page));
             return { articles }; 
         } catch (error) {
+            console.log("DSASSSASGFASFBDBSFDA")
             Redirect("articles/pages/1")
         }
     }
