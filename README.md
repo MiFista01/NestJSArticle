@@ -92,8 +92,9 @@ npm start run
 ## Search in project POST
 ```
 {
-  "fields":["author", "article"],
-  "keys":["name", "title"],
-  "values":["le", "число"]
+  "user":{
+    "name":{"value":"alAL"}
+  },
+  "password":"1234"
 }
 ```

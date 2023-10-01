@@ -1,22 +1,25 @@
 import { Body, Controller, Get, Param, Post, Delete, Put, Redirect, UseGuards } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Articles } from 'src/schemas/articles.schemas';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { ArticleGuard } from 'src/guards/article.guard';
 
 @Controller('article')
+@UseGuards(AuthGuard)
 export class ArticlesController {
     constructor(private readonly articlesService: ArticlesService) {}
 
-    @Get("pages/:page") // получеие статей на странице (пагинация)
+    @Get("page/:page") // получеие статей на странице (пагинация)
     async Page(@Param("page") page:string): Promise<{ articles: Articles[] }> {
         try {
             const articles = await this.articlesService.findAllArticlesPages(Number(page));
             return { articles }; 
         } catch (error) {
-            console.log("DSASSSASGFASFBDBSFDA")
             Redirect("articles/pages/1")
         }
     }
     @Get("entity/:id") // поулчение статьи по айди
+    @UseGuards(ArticleGuard)
     async Article(@Param("id") id:string): Promise<{ articles: Articles }| null> {
         const articles = await this.articlesService.findArticleById(id);
         return { articles }; 

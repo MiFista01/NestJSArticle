@@ -8,23 +8,22 @@ import { subscribeTypeSchema } from 'src/schemas/subscribe_type.schemas';
 import { usersSchema } from 'src/schemas/users.schemas';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
     imports: [
       MongooseModule.forFeature([{ name: 'Subscribe', schema: subscribeSchema }]),
       MongooseModule.forFeature([{ name: 'SubscribeType', schema: subscribeTypeSchema }]),
       MongooseModule.forFeature([{ name: 'User', schema: usersSchema }]),
-      SubscribeModule
+      SubscribeModule,
+      UsersModule
     ],
     controllers: [SubscribeController],
     providers: [
       SubscribeService,
       SubscribeTypeService,
-      {
-        provide: APP_GUARD,
-        useClass: AuthGuard, // Замените на класс вашего гварда
-      }
     ],
+    exports:[SubscribeService]
 })
 export class SubscribeModule{
   configure(consumer: MiddlewareConsumer) {

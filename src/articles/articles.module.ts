@@ -4,21 +4,19 @@ import { articlesSchema } from 'src/schemas/articles.schemas';
 import { ArticlesController } from './articles.controller';
 import { ArticlesService } from './articles.service';
 import {PaginationMiddleware} from '../pagination/pagination.middleware'
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { UsersModule } from 'src/users/users.module';
+import { SubscribeModule } from 'src/subscribe/subscribe.module';
 
 @Module({
     imports: [
       MongooseModule.forFeature([{ name: 'Articles', schema: articlesSchema }]),
-      ArticlesModule
+      ArticlesModule,
+      UsersModule,
+      SubscribeModule
     ],
     controllers: [ArticlesController],
     providers: [
       ArticlesService,
-      {
-        provide: APP_GUARD,
-        useClass: AuthGuard, // Замените на класс вашего гварда
-      }
     ],
 })
 export class ArticlesModule implements NestModule {

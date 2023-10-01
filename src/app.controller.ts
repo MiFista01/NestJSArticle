@@ -15,7 +15,7 @@ export class AppController {
   }
   @Get("error_auth")
   async ErrorAuth(): Promise<string> {
-    return "oh oh oh, LOGOUT!"; 
+    return "oh oh oh, YOU ARE NOT AUTHORIZED!"; 
   }
 }
 

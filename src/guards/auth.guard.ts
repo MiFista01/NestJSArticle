@@ -11,15 +11,13 @@ export class AuthGuard implements CanActivate {
     try {
       const user = await this.authService.checkJWT(request.headers.token)
       if(user == null){
-        console.log("User not")
-        response.redirect('./error_auth')
+        response.redirect(303,'/error_auth')
         return false
       }
-      console.log(user)
+      request.user = user;
       return true
     } catch (error) {
-      console.log("User not found")
-      response.redirect('./error_auth')
+      response.redirect(303,'/error_auth')
       return false
     }
   }

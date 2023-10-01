@@ -16,10 +16,6 @@ import { AuthGuard } from 'src/guards/auth.guard';
     controllers: [CommentsController],
     providers: [
       CommentsService,
-      {
-        provide: APP_GUARD,
-        useClass: AuthGuard, // Замените на класс вашего гварда
-      }
     ],
 })
 export class CommentsModule implements NestModule{

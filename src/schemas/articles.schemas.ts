@@ -5,11 +5,11 @@ export interface Articles extends Document {
   body:string;
   tags:string[];
   UserLikes: Types.ObjectId[];
-  createdAt: Date;
-  updatedAt: Date;
   plot: string;
   slug:string;
   author: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const articlesSchema = new Schema<Articles>(
@@ -18,11 +18,11 @@ export const articlesSchema = new Schema<Articles>(
     body: { type: String, required: true },
     tags: [{ type: String }],
     UserLikes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
     slug: { type: String, required: true },
     plot: { type: String, required: true },
-    author: { type: Schema.Types.ObjectId, ref: 'User' }
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
   },
   {
     timestamps: true,

@@ -11,29 +11,29 @@ export class UsersService {
         @InjectModel('Users') private readonly userModel: Model<Users>,
     ) { }
 
-    async createUser(userData: Users): Promise<Users> {
-      const newUser = new this.userModel(userData);
-      return await newUser.save();
+  async createUser(userData: Users): Promise<Users> {
+    const newUser = new this.userModel(userData);
+    return await newUser.save();
   }
   async checkJWT(token: string): Promise<jwt.JwtPayload | null> {
-      try {
-          const user = await jwt.verify(token, process.env.SECRET_KEY);
-          return user as jwt.JwtPayload;
-      } catch (error) {
-          return null;
-      }
+    try {
+      const user = await jwt.verify(token, process.env.SECRET_KEY);
+      return user as jwt.JwtPayload;
+    } catch (error) {
+        return null;
+    }
   }
   async hashPassword(password: string): Promise<string> {
-      const saltRounds = 10; 
-      return bcrypt.hash(password, saltRounds);
+    const saltRounds = 10; 
+    return bcrypt.hash(password, saltRounds);
   }
   async updateUser(id: string, updatedData: Partial<Users>,): Promise<Users | null> {
-      return await this.userModel
-          .findByIdAndUpdate(id, updatedData, { new: true })
-          .exec();
+    return await this.userModel
+      .findByIdAndUpdate(id, updatedData, { new: true })
+      .exec();
   }
   async deleteUser(id: string): Promise<void> {
-      await this.userModel.findByIdAndRemove(id).exec();
+    await this.userModel.findByIdAndRemove(id).exec();
   }
 
   async findUserById(id: string): Promise<Users | null> {
@@ -50,10 +50,11 @@ export class UsersService {
     return count
   }
   async searchUsers(search: {
-    name?:{value:string, ec:boolean},
-    email?:{value:string, ec:boolean},
-    bio?:{value:string, ec:boolean}
+    name?:{value:string, ec:false},
+    email?:{value:string, ec:false},
+    bio?:{value:string, ec:false}
   }): Promise<{users:Users[], count:number}> {
+    
     let queryMatch = []
     if (search.name !== undefined) {
       if(search.name.ec){

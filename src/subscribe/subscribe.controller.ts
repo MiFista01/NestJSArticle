@@ -1,14 +1,21 @@
-import { Body, Controller, Get, Param, Post, Put, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Delete, UseGuards, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { SubscribeService } from './subscribe.service';
 import { Subscribe } from 'src/schemas/subscribe.schemas';
 import { SubscribeTypeService } from 'src/subscribeType/subscribeType.service';
-import { Types } from 'mongoose';
+import { AuthGuard } from 'src/guards/auth.guard';
+
+interface CustomRequest extends Request {
+    user?: any;
+    valid?: boolean;
+}
 
 @Controller('subscribe')
+@UseGuards(AuthGuard)
 export class SubscribeController {
     constructor(
         private readonly subscribeService: SubscribeService,
-        private readonly subscribeServiceType: SubscribeTypeService,
+        private readonly subscribeTypeService: SubscribeTypeService,
     ) {}
 
     @Get("/all") // получение всех подписок
@@ -29,43 +36,19 @@ export class SubscribeController {
         const users = await this.subscribeService.searchSubscribes(fields, keys, values);
         return users
     }
-    @Post()
-    async CreateSubscribe(@Body() formData: any) {
-        const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], ["6514172589fd5111967abd05"]);
-        const typeFree = await this.subscribeServiceType.findSubscribeType(formData.price)
-        if(userSubscribe.count == 0){
+    @Put()
+    async UpdateSubscribe(@Req() req: CustomRequest, @Body() formData: any) {
+        const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], [req.user.user._id]);
+        const freeType = await this.subscribeTypeService.findSubscribeType(0)
+        const type = await this.subscribeTypeService.findSubscribeType(formData.price)
+        if(type._id.equals(freeType._id)){
+            return "Why should you choose the free option?"
+        }else if(!userSubscribe.subscribes[0].sub_id.equals(freeType._id)){
+            return "you cannot change your subscription until the old one expires"
+        }else{
             let start = new Date();
             let endMonth = new Date(start);
             endMonth.setDate(endMonth.getDate() + 30);
-            let subscribeEnd = new Date(start);
-            subscribeEnd.setDate(start.getDate()+typeFree.countArticles)
-            const subData = {
-                "user_id": new Types.ObjectId("6514172589fd5111967abd05"),
-                "sub_id":new Types.ObjectId(typeFree._id.toString()),
-                "start": start,
-                "monthEnd": endMonth,
-                "subscribeEnd": subscribeEnd,
-                "countArticles": typeFree.countArticles
-            }
-            const subscribe = await this.subscribeService.createSubscribe(subData);
-            return subscribe
-        }else{
-            return "А у вас подписка есть"
-        }
-    }
-    @Put()
-    async UpdateSubscribe(@Body() formData: any) {
-        const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], ["6514172589fd5111967abd05"]);
-        const freeType = await this.subscribeServiceType.findSubscribeType(0)
-        const type = await this.subscribeServiceType.findSubscribeType(formData.price)
-        if(type._id.equals(freeType._id)){
-            return "зачем вы выбрали бесплатный вариант?"
-        }else if(!userSubscribe.subscribes[0].sub_id.equals(freeType._id)){
-            return "а вы неможете поменять подпсику пока не истечёт старая"
-        }else{
-            let start = new Date();
-            let endMonth = new Date(start);
-            endMonth.setDate(endMonth.getDate() + 0);
             let subscribeEnd = new Date(start);
             subscribeEnd.setDate(subscribeEnd.getDate() + type.countDays);
             const updateData = {
