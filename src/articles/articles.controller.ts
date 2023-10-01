@@ -1,9 +1,13 @@
-import { Body, Controller, Get, Param, Post, Delete, Put, Redirect, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, Put, Redirect, UseGuards, Req } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Articles } from 'src/schemas/articles.schemas';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { ArticleGuard } from 'src/guards/article.guard';
 
+interface CustomRequest extends Request {
+    user?: any;
+    valid?: boolean;
+}
 @Controller('article')
 @UseGuards(AuthGuard)
 export class ArticlesController {
@@ -33,7 +37,8 @@ export class ArticlesController {
         return article
     }
     @Post() // создание статей
-    async CreateArticle(@Body() formData: any) {
+    async CreateArticle(@Req() req: CustomRequest, @Body() formData: any) {
+        formData.author = req.user
         const article = await this.articlesService.createArticle(formData);
         return article
     }

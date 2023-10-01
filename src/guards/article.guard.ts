@@ -12,7 +12,6 @@ export class ArticleGuard implements CanActivate {
     const currentDate = new Date();
     if(currentDate > subscribe.subscribeEnd){
       let sub = await this.subscribeService.downgradeSubscribe(request.user.subscribe)
-      console.log()
     }
     if(currentDate > subscribe.monthEnd){
       subscribe.countArticles = subscribe.sub_id["countArticles"]

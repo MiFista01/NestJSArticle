@@ -89,12 +89,31 @@ npm start run
 
 ```
 
-## Search in project POST
+## Routes
 ```
+registration: /reg (POST)
+{
+  
+  "name":"",
+  "email":"",
+  "password":""
+}
+
+authorizations: /in (POST)
 {
   "user":{
     "name":{"value":"alAL"}
   },
   "password":"1234"
+}
+
+article create: /article (POST)
+{
+  title:"",
+  body:"",
+  tags:[""],
+  plot: "",
+  slug:"",
+  author: ""
 }
 ```

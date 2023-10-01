@@ -38,7 +38,7 @@ export class SubscribeController {
     }
     @Put()
     async UpdateSubscribe(@Req() req: CustomRequest, @Body() formData: any) {
-        const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], [req.user.user._id]);
+        const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], [req.user]);
         const freeType = await this.subscribeTypeService.findSubscribeType(0)
         const type = await this.subscribeTypeService.findSubscribeType(formData.price)
         if(type._id.equals(freeType._id)){

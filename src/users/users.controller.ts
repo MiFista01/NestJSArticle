@@ -23,42 +23,6 @@ export class UsersController {
         private readonly subscribeService: SubscribeService
     ) {}
 
-    @Post("/reg")
-    async CreateUser(@Body() formData: any) {
-        const findUser = await this.usersService.searchUsers({
-            name: {value:formData.name, ec: false},
-            email: {value:formData.email, ec: false}})
-        if (findUser.count != 0){
-            return "user already exists"
-        }else{
-            const user = await this.usersService.createUser(formData);
-            const subscribe = await this.subscribeService.createFreeSubscribe(user._id)
-            return {user, subscribe}
-        }
-    }
-    @Post("/in")
-    async AuthUser(@Req() req: CustomRequest, @Body() formData: any) {
-
-        const findUser = await this.usersService.searchUsers(formData.user)
-        if(findUser.count == 0){
-            return "wrong username or email"
-        }else{
-            try {
-                const checkPassword = await bcrypt.compare(formData.password, findUser.users[0].password)
-                if(checkPassword){
-                    delete findUser.users[0].password
-                    const subscribe = await this.subscribeService.searchSubscribes(["user_id"],[""],[req.user._id])
-                    const token = jwt.sign(findUser.users[0], process.env.SECRET_KEY,{ expiresIn: '24h' });
-                    return token;
-                }else{
-                    return "wrong password"
-                }
-            } catch (error) {
-                return "not valid password"
-            }
-        }
-    }
-
     @Get("/all")
     async Users(): Promise<{ users: Users[] }> {
         const users = await this.usersService.findAllUsers();
@@ -75,7 +39,7 @@ export class UsersController {
         return users
     }
 
-    @Put("/upd")
+    @Put("")
     async UpdateUser(@Req() req: CustomRequest, @Body() formData: UpdateUserDto) {
         let findUser
         const errors = await validate(UpdateUserDto);
@@ -90,7 +54,7 @@ export class UsersController {
                 if (findUser.count != 0){
                     return "you can't update user name because it already exists"
                 }else{
-                    await this.usersService.updateUser(req.user._id, {name:formData.name});
+                    await this.usersService.updateUser(req.user.user, {name:formData.name});
                     delete formData.name
                 }
             }
@@ -101,11 +65,11 @@ export class UsersController {
                 if (findUser.count != 0){
                     return "you can't update user email because it already exists"
                 }else{
-                    await this.usersService.updateUser(req.user._id, {email:formData.email});
+                    await this.usersService.updateUser(req.user.user, {email:formData.email});
                     delete formData.email
                 }
             }
-            const user = await this.usersService.updateUser(req.user._id, formData);
+            const user = await this.usersService.updateUser(req.user.user, formData);
             return user
         } catch (error) {
             return "data not valid"
@@ -120,7 +84,7 @@ export class UsersController {
     }
     @Delete("/del")
     async Delete(@Req() req: CustomRequest): Promise<string> {
-        const user = await this.usersService.deleteUser(req.user._id);
+        const user = await this.usersService.deleteUser(req.user);
         return "user deleted"; 
     }
 }

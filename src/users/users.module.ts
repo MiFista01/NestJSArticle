@@ -29,6 +29,6 @@ import { RegAuthController } from './RegAuth.controller';
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(HashPasswordMiddleware).forRoutes({ path: '/reg', method: RequestMethod.POST });
-    consumer.apply(HashPasswordMiddleware).forRoutes({ path: '/upd', method: RequestMethod.PUT });
+    consumer.apply(HashPasswordMiddleware).forRoutes({ path: '/user', method: RequestMethod.PUT });
   }
 }
