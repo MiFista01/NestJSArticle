@@ -4,8 +4,6 @@ import { CommentsService } from './comments.service';
 import { CommentsController } from './comments.controller';
 import { commentsSchema } from 'src/schemas/comments.schemas';
 import { UsersModule } from 'src/users/users.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from 'src/guards/auth.guard';
 
 @Module({
     imports: [

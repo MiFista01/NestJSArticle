@@ -6,8 +6,6 @@ import { subscribeSchema } from 'src/schemas/subscribe.schemas';
 import { SubscribeTypeService } from 'src/subscribeType/subscribeType.service';
 import { subscribeTypeSchema } from 'src/schemas/subscribe_type.schemas';
 import { usersSchema } from 'src/schemas/users.schemas';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
@@ -25,7 +23,4 @@ import { UsersModule } from 'src/users/users.module';
     ],
     exports:[SubscribeService]
 })
-export class SubscribeModule{
-  configure(consumer: MiddlewareConsumer) {
-  }
-}
+export class SubscribeModule{}

@@ -6,7 +6,7 @@ import { SubscribeTypeService } from 'src/subscribeType/subscribeType.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UpdateSubscribeDto } from 'src/DTO/subscribe.dto';
 import { validate } from 'class-validator';
-import { ApiHeader, ApiHeaders, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SearchDto } from 'src/DTO/search.dto';
 
 interface CustomRequest extends Request {
@@ -25,16 +25,19 @@ export class SubscribeController {
     ) {}
 
     @Get("/all") // получение всех подписок
+    @ApiOperation({ summary: 'Get all item list of subscribes', description: "Return subscribes item list" })
     async Subscribes(): Promise<{ subscribes: Subscribe[] }> {
         const subscribes = await this.subscribeService.findAllSubscribes();
         return { subscribes }; 
     }
     @Get("entity/:id") // получение подписки по айди
+    @ApiOperation({ summary: 'Get one item of subscribe', description: "Return subscribe item" })
     async Subscribe(@Param("id") id:string): Promise<{ subscribe: Subscribe }| null> {
         const subscribe = await this.subscribeService.findSubscribeById(id);
         return { subscribe }; 
     }
     @Post("search") // поиск подписок по полю и ели есть ключу
+    @ApiOperation({ summary: 'Search and get a list of items', description: "Return users item list" })
     async Search(@Body() formData: SearchDto) {
         const fields = formData.fields;
         const keys = formData.keys;
@@ -43,6 +46,7 @@ export class SubscribeController {
         return users
     }
     @Put()
+    @ApiOperation({ summary: 'Subscription type update', description: "Return updated subscribe" })
     async UpdateSubscribe(@Req() req: CustomRequest, @Body() formData: UpdateSubscribeDto) {
         const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], [req.user.user]);
         const freeType = await this.subscribeTypeService.findSubscribeType(0)
@@ -72,8 +76,9 @@ export class SubscribeController {
             return subscribe
         }
     }
-    @Delete(':id')
-    async DeleteComment(@Param('id') id: string): Promise<void> {
-        await this.subscribeService.deleteSubscribe(id);
-    }
+    // @Delete(':id')
+    // @ApiOperation({ summary: 'Dekete sibscribe item' })
+    // async DeleteComment(@Param('id') id: string): Promise<void> {
+    //     await this.subscribeService.deleteSubscribe(id);
+    // }
 }

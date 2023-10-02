@@ -6,9 +6,8 @@ import { ArticleGuard } from 'src/guards/article.guard';
 import { CreateArticleDto, UpdateArticleDto } from 'src/DTO/article.dto';
 import { validate } from 'class-validator';
 import { Types } from 'mongoose';
-import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SearchDto } from 'src/DTO/search.dto';
-import { Users } from 'src/schemas/users.schemas';
 
 interface CustomRequest extends Request {
     user?: any;
@@ -22,6 +21,7 @@ export class ArticlesController {
     constructor(private readonly articlesService: ArticlesService) {}
 
     @Get("page/:page") // получеие статей на странице (пагинация)
+    @ApiOperation({ summary: 'Get a list of items on one page', description: 'Returns a list of items.' })
     async Page(@Param("page") page:string): Promise<{ articles: Articles[] }> {
         try {
             const articles = await this.articlesService.findAllArticlesPages(Number(page));
@@ -31,12 +31,14 @@ export class ArticlesController {
         }
     }
     @Get("entity/:id") // поулчение статьи по айди
+    @ApiOperation({ summary: 'Get item', description: 'Return article object' })
     @UseGuards(ArticleGuard)
     async Article(@Param("id") id:string): Promise<{ articles: Articles }| null> {
         const articles = await this.articlesService.findArticleById(id);
         return { articles }; 
     }
     @Post("search") // поиск статей почти по всем полям
+    @ApiOperation({ summary: 'Search and get a list of items', description: 'Returns a list of items.' })
     async Search(@Body() formData: SearchDto) {
         const fields = formData.fields;
         const keys = formData.keys;
@@ -46,6 +48,7 @@ export class ArticlesController {
     }
 
     @Post() // создание статей
+    @ApiOperation({ summary: 'Create article', description: 'Return article item.' })
     async CreateArticle(@Req() req: CustomRequest, @Body() formData: CreateArticleDto) {
         let createArticle = formData as Articles
         createArticle.author = req.user.user
@@ -58,6 +61,7 @@ export class ArticlesController {
         return article
     }
     @Put("/upd/:id") // обновление статей
+    @ApiOperation({ summary: 'Update article item', description: 'Return article item.' })
     async UpdateArticle(@Param('id') id: string,@Req() req:CustomRequest, @Body() formData: UpdateArticleDto) {
         const errors = await validate(UpdateArticleDto);
         if (errors.length > 0) {
@@ -76,6 +80,7 @@ export class ArticlesController {
         }
     }
     @Put("/follo/:id") // обновление статей
+    @ApiOperation({ summary: 'Set follo to article', description: "Return article's UsersLikes" })
     async UpdateArticleFollowers(@Param('id') id: string, @Req() req: CustomRequest, @Body() formData: any) {
         const article = await this.articlesService.searchArticles(["_id"], [""], [id]);
         if(article.count > 0){
@@ -104,6 +109,7 @@ export class ArticlesController {
         }
     }
     @Delete(':id') // удаление статьи
+    @ApiOperation({ summary: 'Delete item' })
     async DeleteArticle(@Param('id') id: string, @Req() req: CustomRequest): Promise<void | string> {
         const article = await this.articlesService.findArticleById(id);
         const author = article.author[0]

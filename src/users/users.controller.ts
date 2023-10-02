@@ -5,7 +5,7 @@ import { Users } from 'src/schemas/users.schemas';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UpdateUserDto } from 'src/DTO/user.dto';
 import { validate } from 'class-validator';
-import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 interface CustomRequest extends Request {
     user?: any;
@@ -21,16 +21,19 @@ export class UsersController {
         private readonly usersService: UsersService,
     ) {}
     @Get("/all")
+    @ApiOperation({ summary: 'Get users items list', description: "Return users item list" })
     async Users(): Promise<{ users: Users[] }> {
         const users = await this.usersService.findAllUsers();
         return { users }; 
     }
     @Get("entity/:id")
+    @ApiOperation({ summary: 'Get entity of users', description: "Return one user item" })
     async User(@Param("id") id:string): Promise<{ user: Users }| null> {
         const user = await this.usersService.findUserById(id);
         return { user }; 
     }
     @Post("search")
+    @ApiOperation({ summary: 'Search and get a list of items', description: "Return users item list" })
     async Search(@Body() formData: UpdateUserDto) {
         const searchParams = {};
         if (formData.name !== undefined) {
@@ -48,11 +51,13 @@ export class UsersController {
         return users
     }
     @Get("/profile")
+    @ApiOperation({ summary: 'Get profile', description: "Return profile" })
     async Profile(@Req() req:CustomRequest): Promise<Users > {
         const user = await this.usersService.findUserById(req.user.user);
         return user; 
     }
     @Put("/profile")
+    @ApiOperation({ summary: 'Update profile', description: "Return updated profile" })
     async UpdateUser(@Req() req: CustomRequest, @Body() formData: UpdateUserDto) {
         let findUser
         const errors = await validate(UpdateUserDto);
@@ -89,6 +94,7 @@ export class UsersController {
         }
     }
     @Get("/profile/out")
+    @ApiOperation({ summary: 'Logout' })
     async Out(@Req() req: Request): Promise<string> {
         if (req.headers['token']) {
             delete req.headers['token'];
@@ -96,6 +102,7 @@ export class UsersController {
         return "logout"; 
     }
     @Delete("/profile")
+    @ApiOperation({ summary: 'Delete user from profile', description: "string 'user deleted'" })
     async Delete(@Req() req: CustomRequest): Promise<string> {
         const user = await this.usersService.deleteUser(req.user.user);
         return "user deleted"; 

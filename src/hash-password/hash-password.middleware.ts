@@ -1,6 +1,4 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { validate } from 'class-validator';
-import { UpdateUserDto } from 'src/DTO/user.dto';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()

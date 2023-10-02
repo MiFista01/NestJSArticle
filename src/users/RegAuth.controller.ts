@@ -9,7 +9,7 @@ import { validate } from 'class-validator';
 import { AuthUserDto, CreateUserDto } from 'src/DTO/user.dto';
 import { Subscribe } from '../schemas/subscribe.schemas';
 import { Users } from 'src/schemas/users.schemas';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 interface CustomRequest extends Request {
     user?: any;
@@ -25,6 +25,7 @@ export class RegAuthController {
     ) {}
 
     @Post("/reg")
+    @ApiOperation({ summary: 'User registration', description: "Return new user item" })
     async CreateUser(@Body() formData: CreateUserDto) {
         const findUser = await this.usersService.searchUsers({
             name: {value:formData.name, ec: false},
@@ -46,16 +47,25 @@ export class RegAuthController {
         }
     }
     @Post("/in")
-    async AuthUser(@Req() req: CustomRequest, @Body() formData: AuthUserDto) {
-        const user = {}
-        if(formData.email == undefined){
-            user["name"] = {"value":formData.name}
-        }
-        if(formData.name == undefined){
-            user["email"] = {"value":formData.name}
-        }
-        const findUser = await this.usersService.searchUsers(user)
+    @ApiOperation({ summary: 'User authorization', description: "Return token" })
+    async AuthUser( @Body() formData: AuthUserDto) {
+        let user = {}
+        let continueToPassword = false;
+        user["name"] = {"value":formData.user}
+        let findUser = await this.usersService.searchUsers(user)
         if(findUser.count == 0){
+            user = {}
+            user["email"] = {"value":formData.user}
+            findUser = await this.usersService.searchUsers(user)
+            if(findUser.count == 0){
+                continueToPassword = false
+            }else{
+                continueToPassword = true
+            }
+        }else{
+            continueToPassword = true
+        }
+        if(!continueToPassword){
             return "wrong username or email"
         }else{
             try {
