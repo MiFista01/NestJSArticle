@@ -3,22 +3,26 @@ import { CommentsService } from './comments.service';
 import { Comments } from 'src/schemas/comments.schemas';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CreateCommentsDto, UpdateCommentsDto } from 'src/DTO/comments.dto';
-import { validate } from 'class-validator';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { SearchDto } from 'src/DTO/search.dto';
+import { ArticlesService } from 'src/articles/articles.service';
+import { validate } from 'class-validator';
 
 interface CustomRequest extends Request {
     user?: any;
     valid?: boolean;
 }
 
+@ApiBearerAuth()
 @Controller('comment')
 @ApiTags('comments')
-@ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
 export class CommentsController {
-    constructor(private readonly usersService: CommentsService) {}
+    constructor(
+        private readonly usersService: CommentsService,
+        private readonly articleService: ArticlesService
+    ) {}
 
     @Get("/all") //получение всех коментов
     @ApiOperation({ summary: 'Get all comments', description: "Return item list of comments" })
@@ -42,17 +46,22 @@ export class CommentsController {
         return users
     }
     @Post("article/:id") // создание комента
-    @ApiOperation({ summary: 'creating a comment using the article ID and text from the form ', description: "Return new comment" })
+    @ApiOperation({ summary: 'creating a comment using the article ID and text from the form ', description: "Return new comment or error" })
     async CreateComment(@Param("id") article:string, @Req() req:CustomRequest, @Body() formData: CreateCommentsDto) {
         const commentCreate = formData as Comments
         commentCreate.author = req.user.user
-        commentCreate.article = new Types.ObjectId(article)
-        const errors = await validate(CreateCommentsDto);
-        if (errors.length > 0) {
-            return { errors };
+        const articleFind = await this.articleService.findArticleById(article);
+        if(articleFind != undefined){
+            commentCreate.article = new Types.ObjectId(article)
+            const errors = await validate(CreateCommentsDto);
+            if (errors.length > 0) {
+                return { errors };
+            }
+            const comment = await this.usersService.createComment(commentCreate);
+            return comment
+        }else{
+            return "there are no articles with this ID"
         }
-        const comment = await this.usersService.createComment(commentCreate);
-        return comment
     }
     @Put() // обновление комента
     @ApiOperation({ summary: 'updating a comment using the article ID and text from the form ', description: "Return updated comment" })

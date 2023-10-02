@@ -6,16 +6,18 @@ import { ArticleGuard } from 'src/guards/article.guard';
 import { CreateArticleDto, UpdateArticleDto } from 'src/DTO/article.dto';
 import { validate } from 'class-validator';
 import { Types } from 'mongoose';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SearchDto } from 'src/DTO/search.dto';
 
 interface CustomRequest extends Request {
     user?: any;
     valid?: boolean;
 }
+
+@ApiBearerAuth()
 @Controller('article')
 @ApiTags('articles')
-@ApiHeader({name: 'token'})
+// @ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
 export class ArticlesController {
     constructor(private readonly articlesService: ArticlesService) {}

@@ -94,7 +94,7 @@ export class ArticlesService {
             from: 'user',
             localField: 'author',
             foreignField: '_id',
-            as: 'author'
+            as: 'user'
         }
       },
       {

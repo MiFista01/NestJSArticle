@@ -6,7 +6,7 @@ import { SubscribeTypeService } from 'src/subscribeType/subscribeType.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UpdateSubscribeDto } from 'src/DTO/subscribe.dto';
 import { validate } from 'class-validator';
-import { ApiHeader, ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SearchDto } from 'src/DTO/search.dto';
 
 interface CustomRequest extends Request {
@@ -14,9 +14,9 @@ interface CustomRequest extends Request {
     valid?: boolean;
 }
 
+@ApiBearerAuth()
 @Controller('subscribe')
 @ApiTags('subscribe')
-@ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
 export class SubscribeController {
     constructor(

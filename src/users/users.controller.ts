@@ -3,18 +3,18 @@ import { Request } from 'express';
 import { UsersService } from './users.service';
 import { Users } from 'src/schemas/users.schemas';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { UpdateUserDto } from 'src/DTO/user.dto';
+import { SearchUserDto, UpdateUserDto } from 'src/DTO/user.dto';
 import { validate } from 'class-validator';
-import { ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 interface CustomRequest extends Request {
     user?: any;
     valid?: boolean;
 }
 
+@ApiBearerAuth()
 @Controller('user')
 @ApiTags('user')
-@ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
 export class UsersController {
     constructor(
@@ -34,7 +34,7 @@ export class UsersController {
     }
     @Post("search")
     @ApiOperation({ summary: 'Search and get a list of items', description: "Return users item list" })
-    async Search(@Body() formData: UpdateUserDto) {
+    async Search(@Body() formData: SearchUserDto) {
         const searchParams = {};
         if (formData.name !== undefined) {
             searchParams['name'] = { value: formData.name, ec: true };
@@ -102,7 +102,7 @@ export class UsersController {
         return "logout"; 
     }
     @Delete("/profile")
-    @ApiOperation({ summary: 'Delete user from profile', description: "string 'user deleted'" })
+    @ApiOperation({ summary: 'Delete user from profile', description: "return string 'user deleted'" })
     async Delete(@Req() req: CustomRequest): Promise<string> {
         const user = await this.usersService.deleteUser(req.user.user);
         return "user deleted"; 

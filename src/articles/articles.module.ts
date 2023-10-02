@@ -18,6 +18,7 @@ import { SubscribeModule } from 'src/subscribe/subscribe.module';
     providers: [
       ArticlesService,
     ],
+    exports:[ArticlesService]
 })
 export class ArticlesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

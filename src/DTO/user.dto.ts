@@ -55,7 +55,22 @@ export class UpdateUserDto {
     @IsString()
     password?: string;
 }
+export class SearchUserDto {
+    @ApiProperty({description: 'name for update',type: String, default: "fil", required: false})
+    @IsOptional()
+    @IsString()
+    name?: string;
 
+    @ApiProperty({description: 'email for update',type: String, default: "fil@gmail.com", required: false})
+    @IsOptional()
+    @IsEmail()
+    email?: string;
+
+    @ApiPropertyOptional({description: "user's bio",type: String, default: "HEEEEEEEEEELP", required: false})
+    @IsOptional()
+    @IsString()
+    bio?: string;
+}
 export class AuthUserDto {
     @ApiProperty({description: 'email for update',type: String, default: "aleksei@gmail.com", required: false})
     @IsOptional()

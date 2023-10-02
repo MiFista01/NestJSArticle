@@ -34,7 +34,7 @@ export class CommentsService {
           as: 'article'
         }
       }
-  ]).exec()
+    ]).exec()
     return comment[0]
   }
 

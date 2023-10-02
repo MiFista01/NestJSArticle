@@ -18,6 +18,13 @@ async function bootstrap() {
     .setDescription('This is postimees')
     .setVersion('1.0')
     .addTag('postimees')
+    .addBearerAuth({ 
+      type: 'apiKey',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'token',
+      in: 'header'
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
