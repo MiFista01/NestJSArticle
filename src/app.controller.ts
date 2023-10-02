@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { AppService } from './app.service';
 import { Articles } from './schemas/articles.schemas';
 
-@Controller()
+@Controller("nestjs")
 export class AppController {
   constructor(private readonly appService: AppService) {}
 

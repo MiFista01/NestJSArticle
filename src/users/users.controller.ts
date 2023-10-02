@@ -13,7 +13,7 @@ interface CustomRequest extends Request {
 }
 
 @ApiBearerAuth()
-@Controller('user')
+@Controller('nestjs/user')
 @ApiTags('user')
 @UseGuards(AuthGuard)
 export class UsersController {
