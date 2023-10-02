@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Users } from 'src/schemas/users.schemas';
+import { Articles } from 'src/schemas/articles.schemas';
+import { Comments } from 'src/schemas/comments.schemas';
+import { Subscribe } from 'src/schemas/subscribe.schemas';
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
@@ -9,6 +12,9 @@ import * as jwt from 'jsonwebtoken'
 export class UsersService {
     constructor(
         @InjectModel('Users') private readonly userModel: Model<Users>,
+        @InjectModel('Articles') private readonly articleModel: Model<Articles>,
+        @InjectModel('Comments') private readonly commentModel: Model<Comments>,
+        @InjectModel('Subscribe') private readonly subscribeModel: Model<Subscribe>
     ) { }
 
   async createUser(userData: Users): Promise<Users> {
@@ -33,7 +39,11 @@ export class UsersService {
       .exec();
   }
   async deleteUser(id: string): Promise<void> {
-    await this.userModel.findByIdAndRemove(id).exec();
+    const objectId = new Types.ObjectId(id);
+    await this.userModel.findByIdAndRemove(objectId).exec();
+    await this.articleModel.deleteMany({author: objectId}).exec();
+    await this.commentModel.deleteMany({author: objectId}).exec();
+    await this.subscribeModel.deleteOne({user_id: objectId}).exec();
   }
 
   async findUserById(id: string): Promise<Users | null> {

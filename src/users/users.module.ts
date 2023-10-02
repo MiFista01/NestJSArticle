@@ -8,10 +8,14 @@ import { SubscribeService } from 'src/subscribe/subscribe.service';
 import { subscribeSchema } from '../schemas/subscribe.schemas';
 import { subscribeTypeSchema } from 'src/schemas/subscribe_type.schemas';
 import { RegAuthController } from './RegAuth.controller';
+import { articlesSchema } from 'src/schemas/articles.schemas';
+import { commentsSchema } from 'src/schemas/comments.schemas';
 
 @Module({
     imports: [
       MongooseModule.forFeature([{ name: 'Users', schema: usersSchema }]),
+      MongooseModule.forFeature([{ name: 'Articles', schema: articlesSchema }]),
+      MongooseModule.forFeature([{ name: 'Comments', schema: commentsSchema }]),
       MongooseModule.forFeature([{ name: 'Subscribe', schema: subscribeSchema }]),
       MongooseModule.forFeature([{ name: 'SubscribeType', schema: subscribeTypeSchema }]),
       UsersModule,

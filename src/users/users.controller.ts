@@ -1,28 +1,25 @@
 import { Body, Controller, Get, Param, Post, Delete, UseGuards, Put, Req } from '@nestjs/common';
-import * as jwt from "jsonwebtoken"
-import * as bcrypt from 'bcrypt';
-import * as dotenv from 'dotenv';
 import { Request } from 'express';
 import { UsersService } from './users.service';
 import { Users } from 'src/schemas/users.schemas';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UpdateUserDto } from 'src/DTO/user.dto';
 import { validate } from 'class-validator';
-import { SubscribeService } from 'src/subscribe/subscribe.service';
+import { ApiHeader, ApiTags } from '@nestjs/swagger';
 
 interface CustomRequest extends Request {
     user?: any;
     valid?: boolean;
 }
-dotenv.config()
+
 @Controller('user')
+@ApiTags('user')
+@ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private readonly subscribeService: SubscribeService
     ) {}
-
     @Get("/all")
     async Users(): Promise<{ users: Users[] }> {
         const users = await this.usersService.findAllUsers();
@@ -34,12 +31,28 @@ export class UsersController {
         return { user }; 
     }
     @Post("search")
-    async Search(@Body() formData: any) {
-        const users = await this.usersService.searchUsers(formData.search);
+    async Search(@Body() formData: UpdateUserDto) {
+        const searchParams = {};
+        if (formData.name !== undefined) {
+            searchParams['name'] = { value: formData.name, ec: true };
+        }
+
+        if (formData.email !== undefined) {
+            searchParams['email'] = { value: formData.email, ec: true };
+        }
+
+        if (formData.bio !== undefined) {
+            searchParams['bio'] = { value: formData.bio, ec: true };
+        }
+        const users = await this.usersService.searchUsers(searchParams);
         return users
     }
-
-    @Put("")
+    @Get("/profile")
+    async Profile(@Req() req:CustomRequest): Promise<Users > {
+        const user = await this.usersService.findUserById(req.user.user);
+        return user; 
+    }
+    @Put("/profile")
     async UpdateUser(@Req() req: CustomRequest, @Body() formData: UpdateUserDto) {
         let findUser
         const errors = await validate(UpdateUserDto);
@@ -75,16 +88,16 @@ export class UsersController {
             return "data not valid"
         }
     }
-    @Get("/out")
+    @Get("/profile/out")
     async Out(@Req() req: Request): Promise<string> {
         if (req.headers['token']) {
             delete req.headers['token'];
         }
         return "logout"; 
     }
-    @Delete("/del")
+    @Delete("/profile")
     async Delete(@Req() req: CustomRequest): Promise<string> {
-        const user = await this.usersService.deleteUser(req.user);
+        const user = await this.usersService.deleteUser(req.user.user);
         return "user deleted"; 
     }
 }

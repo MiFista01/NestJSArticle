@@ -16,8 +16,8 @@ export const articlesSchema = new Schema<Articles>(
   {
     title: { type: String, required: true },
     body: { type: String, required: true },
-    tags: [{ type: String }],
-    UserLikes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    tags: [{ type: String, default: []}],
+    UserLikes: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
     slug: { type: String, required: true },
     plot: { type: String, required: true },
     author: { type: Schema.Types.ObjectId, ref: 'User' },

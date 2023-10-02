@@ -101,19 +101,20 @@ registration: /reg (POST)
 
 authorizations: /in (POST)
 {
-  "user":{
-    "name":{"value":"alAL"}
-  },
-  "password":"1234"
+  "name": "aleksei",
+  "password": "1234"
 }
 
-article create: /article (POST)
+create article: /article (POST)
 {
-  title:"",
-  body:"",
-  tags:[""],
-  plot: "",
-  slug:"",
-  author: ""
+  "title":"",
+  "body":"",
+  "tags":[""],
+  "plot": ""
+}
+
+create comment : /comment (POST)
+{
+  "text":""
 }
 ```

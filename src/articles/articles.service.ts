@@ -10,7 +10,7 @@ export class ArticlesService {
     ) { }
 
   async createArticle(articleData: Articles): Promise<Articles> {
-    const newArticle = new this.articleModel(articleData);
+    const newArticle = (await new this.articleModel(articleData));
     return await newArticle.save();
   }
 
@@ -66,7 +66,7 @@ export class ArticlesService {
     const count = await this.articleModel.countDocuments().exec()
     return count
   }
-  async searchArticles(field: [string], key:[string], value:[string]): Promise<{articles:Articles[], count:number}> {
+  async searchArticles(field: string[], key:string[], value:string[]): Promise<{articles:Articles[], count:number}> {
     const queryMatchArray = []
     let queryMatch = {}
     if(field.length == key.length && value.length) {

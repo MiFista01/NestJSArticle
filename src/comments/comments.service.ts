@@ -56,7 +56,7 @@ export class CommentsService {
     return Comments
   }
 
-  async searchComments(field: [string], key:[string], value:[string]): Promise<{comments:Comments[], count:number}> {
+  async searchComments(field: string[], key:string[], value:string[]): Promise<{comments:Comments[], count:number}> {
     const queryMatchArray = []
     let queryMatch = {}
     if(field.length == key.length && value.length) {
@@ -78,6 +78,7 @@ export class CommentsService {
           queryMatch = {}
       }
     }
+    console.log(queryMatchArray)
     const comments = await this.commentModel.aggregate([
       {
         $lookup:
@@ -85,7 +86,7 @@ export class CommentsService {
               from: 'user',
               localField: 'author',
               foreignField: '_id',
-              as: 'author' 
+              as: 'user' 
             }
       },
       {

@@ -4,6 +4,10 @@ import { SubscribeService } from './subscribe.service';
 import { Subscribe } from 'src/schemas/subscribe.schemas';
 import { SubscribeTypeService } from 'src/subscribeType/subscribeType.service';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { UpdateSubscribeDto } from 'src/DTO/subscribe.dto';
+import { validate } from 'class-validator';
+import { ApiHeader, ApiHeaders, ApiTags } from '@nestjs/swagger';
+import { SearchDto } from 'src/DTO/search.dto';
 
 interface CustomRequest extends Request {
     user?: any;
@@ -11,6 +15,8 @@ interface CustomRequest extends Request {
 }
 
 @Controller('subscribe')
+@ApiTags('subscribe')
+@ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
 export class SubscribeController {
     constructor(
@@ -29,7 +35,7 @@ export class SubscribeController {
         return { subscribe }; 
     }
     @Post("search") // поиск подписок по полю и ели есть ключу
-    async Search(@Body() formData: any) {
+    async Search(@Body() formData: SearchDto) {
         const fields = formData.fields;
         const keys = formData.keys;
         const values = formData.values;
@@ -37,8 +43,8 @@ export class SubscribeController {
         return users
     }
     @Put()
-    async UpdateSubscribe(@Req() req: CustomRequest, @Body() formData: any) {
-        const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], [req.user]);
+    async UpdateSubscribe(@Req() req: CustomRequest, @Body() formData: UpdateSubscribeDto) {
+        const userSubscribe = await this.subscribeService.searchSubscribes(["user_id"], [""], [req.user.user]);
         const freeType = await this.subscribeTypeService.findSubscribeType(0)
         const type = await this.subscribeTypeService.findSubscribeType(formData.price)
         if(type._id.equals(freeType._id)){
@@ -57,6 +63,10 @@ export class SubscribeController {
                 "monthEnd": endMonth,
                 "subscribeEnd": subscribeEnd,
                 "countArticles": type.countArticles
+            }
+            const errors = await validate(UpdateSubscribeDto);
+            if (errors.length > 0) {
+                return { errors };
             }
             const subscribe = await this.subscribeService.updateSubscribe(userSubscribe.subscribes[0]._id, updateData);
             return subscribe

@@ -9,7 +9,6 @@ export class HashPasswordMiddleware implements NestMiddleware {
   async use(req: any, res: any, next: () => void) {
     let hashedPassword
     if(req.body.password !== undefined){
-      console.log(req.body.password)
       if(typeof req.body.password == 'string'){
         hashedPassword = await this.usersService.hashPassword(req.body.password)
         req.body.password = hashedPassword

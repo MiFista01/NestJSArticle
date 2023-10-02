@@ -1,7 +1,8 @@
 import { Injectable, Type } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { subscribe } from 'diagnostics_channel';
+import { validate } from 'class-validator';
 import mongoose, { Model, Types } from 'mongoose';
+import { CreateSubscribeDto } from 'src/DTO/subscribe.dto';
 import { Subscribe } from 'src/schemas/subscribe.schemas';
 import { SubscribeType } from 'src/schemas/subscribe_type.schemas';
 
@@ -15,7 +16,7 @@ export class SubscribeService {
         const newSubscribe = new this.subscribeModel(subData);
         return await newSubscribe.save();
     }
-    async createFreeSubscribe(userId: string): Promise<Subscribe| null> {
+    async createFreeSubscribe(userId: string): Promise<Subscribe | null | any> {
         const userSubscribe = await this.subscribeModel.aggregate([
             {$match:{user_id:new Types.ObjectId(userId)}}
         ])
@@ -34,6 +35,10 @@ export class SubscribeService {
                 "subscribeEnd": subscribeEnd,
                 "countArticles": typeFree.countArticles
             }
+            const errors = await validate(CreateSubscribeDto);
+            if (errors.length > 0) {
+                return { errors };
+            }
             const subscribe = new this.subscribeModel(subData);
             return await subscribe.save();
         }else{
@@ -42,12 +47,10 @@ export class SubscribeService {
     }
     async downgradeSubscribe(id: string): Promise<Subscribe> {
         const userSubscribe = await this.subscribeModel.findById(id).exec();
-        console.log(userSubscribe);
         const typeFree = await this.subscribeTypeModel.findOne({price: 0}).exec();
         if (!userSubscribe) {
           throw new Error("Subscribe not found");
         }
-        console.log("downgrade")
         userSubscribe.start = userSubscribe.subscribeEnd;
         const nextMonth = new Date(userSubscribe.subscribeEnd);
         nextMonth.setDate(nextMonth.getDate() + 10);
@@ -94,7 +97,7 @@ export class SubscribeService {
         const count = await this.subscribeModel.countDocuments().exec()
         return count
     }
-    async searchSubscribes(field:[string], key:[string], value:[string]): Promise<{subscribes:Subscribe[], count:number}> {
+    async searchSubscribes(field:string[], key:string[], value:string[]): Promise<{subscribes:Subscribe[], count:number}> {
         const queryMatchArray = []
         let queryMatch = {}
         if(field.length == key.length && value.length) {

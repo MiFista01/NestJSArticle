@@ -1,68 +1,48 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsArray, IsDate, IsOptional, IsString} from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateArticleDto {
+    @ApiProperty({description: 'Article title',type: String})
     @IsString()
     title: string;
 
+    @ApiProperty({description: 'The bulk of the text',type: String})
     @IsString()
     body: string;
 
+    @ApiPropertyOptional({description: 'Tags for this article',type: [String]})
+    @IsOptional()
     @IsArray()
-    tags: string;
+    tags?: string[];
 
-    @IsArray()
-    UserLikes: string;
-
+    @ApiProperty({description: 'Short text for starters',type: String})
     @IsString()
     plot: string;
-
-    @IsString()
-    slug: string;
-
-    @IsArray()
-    author: string;
-
-    @IsDate()
-    createdAt: string;
-
-    @IsDate()
-    updatedAt: string;
 }
 
-export class UpdateUserDto {
+export class UpdateArticleDto {
+    @ApiPropertyOptional({description: 'Article title',type: String})
     @IsOptional()
     @IsString()
     title?: string;
 
+
+    @ApiPropertyOptional({description: 'The bulk of the text',type: String})
     @IsOptional()
     @IsString()
     body?: string;
 
+
+    @ApiPropertyOptional({description: 'Tags for this article',type: [String]})
     @IsOptional()
     @IsArray()
-    tags?: string;
+    tags?: string[];
 
-    @IsOptional()
-    @IsArray()
-    UserLikes?: string;
 
+    @ApiPropertyOptional({description: 'Short text for starters',type: String})
     @IsOptional()
     @IsString()
     plot?: string;
-
-    @IsOptional()
-    @IsString()
-    slug?: string;
-
-    @IsOptional()
-    @IsArray()
-    author?: string;
-
-    @IsOptional()
-    @IsDate()
-    createdAt?: string;
-
-    @IsOptional()
-    @IsDate()
-    updatedAt?: string;
 }

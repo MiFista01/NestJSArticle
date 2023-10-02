@@ -1,42 +1,17 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDate, IsOptional, IsString} from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateCommentsDto {
+    @ApiProperty({description: "Comment's text",type: String})
     @IsString()
     text: string;
-
-    @IsString()
-    author: string;
-
-    @IsString()
-    article: string;
-
-    @IsDate()
-    createdAt: string;
-
-    @IsDate()
-    updatedAt: string;
-
 }
 
-export class UpdateUserDto {
+export class UpdateCommentsDto {
+    @ApiProperty({description: "Comment's text",type: String})
     @IsOptional()
     @IsString()
     text?: string;
-
-    @IsOptional()
-    @IsString()
-    author?: string;
-
-    @IsOptional()
-    @IsString()
-    article?: string;
-
-    @IsOptional()
-    @IsDate()
-    createdAt?: string;
-
-    @IsOptional()
-    @IsDate()
-    updatedAt?: string;
 
 }
