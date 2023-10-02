@@ -59,7 +59,7 @@ export class UpdateUserDto {
 export class AuthUserDto {
     @ApiProperty({description: 'email for update',type: String, default: "aleksei@gmail.com", required: false})
     @IsOptional()
-    @IsEmail()
+    @IsString()
     @ValidateIf((o) => o.name === undefined)
     user?: string;
 
