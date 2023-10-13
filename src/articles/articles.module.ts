@@ -22,6 +22,6 @@ import { SubscribeModule } from 'src/subscribe/subscribe.module';
 })
 export class ArticlesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(PaginationMiddleware).forRoutes('article/pages/:page');
+    consumer.apply(PaginationMiddleware).forRoutes('article/page/:page');
   }
 }
