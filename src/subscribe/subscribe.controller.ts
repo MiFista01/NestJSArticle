@@ -15,7 +15,7 @@ interface CustomRequest extends Request {
 }
 
 @ApiBearerAuth()
-@Controller('subscribe')
+@Controller('api/subscribe')
 @ApiTags('subscribe')
 @UseGuards(AuthGuard)
 export class SubscribeController {

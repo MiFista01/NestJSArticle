@@ -15,7 +15,7 @@ interface CustomRequest extends Request {
 }
 
 @ApiBearerAuth()
-@Controller('article')
+@Controller('api/article')
 @ApiTags('articles')
 // @ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
@@ -62,21 +62,21 @@ export class ArticlesController {
         const article = await this.articlesService.createArticle(createArticle);
         return article
     }
-    @Put("/upd/:id") // обновление статей
+    @Put("/upd/:slug") // обновление статей
     @ApiOperation({ summary: 'Update article item', description: 'Return article item.' })
-    async UpdateArticle(@Param('id') id: string,@Req() req:CustomRequest, @Body() formData: UpdateArticleDto) {
+    async UpdateArticle(@Param('slug') slug: string,@Req() req:CustomRequest, @Body() formData: UpdateArticleDto) {
         const errors = await validate(UpdateArticleDto);
         if (errors.length > 0) {
             return { errors };
         }
         const updateData = formData as Articles
-        const article = await this.articlesService.findArticleById(id);
-        const author = article.author[0]
-        if(author._id.toString() == req.user.user){
+        const article = await this.articlesService.searchArticles(["slug"],[""],[slug]);
+        const author = article.articles[0]["user"]
+        if(author[0]["_id"].toString() == req.user.user){
             if(updateData.title != undefined){
                 updateData.slug = formData.title.toLowerCase().replace(/\s+/g, '-');
             }
-            return await this.articlesService.updateArticle(id, updateData)
+            return await this.articlesService.updateArticle(slug, updateData)
         }else{
             return "this is not your article"
         }

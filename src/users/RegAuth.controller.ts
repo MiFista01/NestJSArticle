@@ -16,7 +16,7 @@ interface CustomRequest extends Request {
     valid?: boolean;
 }
 dotenv.config()
-@Controller("")
+@Controller("api")
 @ApiTags('guest')
 export class RegAuthController {
     constructor(
@@ -24,7 +24,7 @@ export class RegAuthController {
         private readonly subscribeService: SubscribeService
     ) {}
 
-    @Post("/reg")
+    @Post("/users")
     @ApiOperation({ summary: 'User registration', description: "Return new user item" })
     async CreateUser(@Body() formData: CreateUserDto) {
         const findUser = await this.usersService.searchUsers({
@@ -46,9 +46,9 @@ export class RegAuthController {
             return { subscribe}
         }
     }
-    @Post("/in")
+    @Post("/users/login")
     @ApiOperation({ summary: 'User authorization', description: "Return token" })
-    async AuthUser( @Body() formData: AuthUserDto) {
+    async AuthUser( @Body() formData: AuthUserDto): Promise<{ user: any }| string> {
         let user = {}
         let continueToPassword = false;
         user["name"] = {"value":formData.user}
@@ -72,12 +72,15 @@ export class RegAuthController {
                 const checkPassword = await bcrypt.compare(formData.password, findUser.users[0].password)
                 if(checkPassword){
                     delete findUser.users[0].password
+                    
                     const subscribe = await this.subscribeService.searchSubscribes(["user_id"],[""],[findUser.users[0]._id])
                     const token = jwt.sign({
-                        user:findUser.users[0]._id,
+                        user:findUser.users[0],
                         subscribe:subscribe.subscribes[0]._id
                     }, process.env.SECRET_KEY,{ expiresIn: '24h' });
-                    return token;
+                    findUser.users[0]["token"] = token
+                    delete findUser.users[0]._id
+                    return {user:findUser.users[0]};
                 }else{
                     return "wrong password"
                 }

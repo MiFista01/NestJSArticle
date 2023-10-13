@@ -8,6 +8,7 @@ import { Subscribe } from 'src/schemas/subscribe.schemas';
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
+
 @Injectable()
 export class UsersService {
     constructor(

@@ -11,13 +11,13 @@ export class AuthGuard implements CanActivate {
     try {
       const user = await this.authService.checkJWT(request.headers.token)
       if(user == null){
-        response.redirect(303,'nestjs/error_auth')
+        response.redirect(303,'api/error_auth')
         return false
       }
       request.user = user;
       return true
     } catch (error) {
-      response.redirect(303,'nestjs/error_auth')
+      response.redirect(303,'api/error_auth')
       return false
     }
   }

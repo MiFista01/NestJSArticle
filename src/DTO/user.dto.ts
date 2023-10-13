@@ -82,4 +82,5 @@ export class AuthUserDto {
     @IsOptional()
     @IsString()
     password?: string;
+
 }

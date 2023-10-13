@@ -15,7 +15,7 @@ interface CustomRequest extends Request {
 }
 
 @ApiBearerAuth()
-@Controller('comment')
+@Controller('api/comment')
 @ApiTags('comments')
 @UseGuards(AuthGuard)
 export class CommentsController {
