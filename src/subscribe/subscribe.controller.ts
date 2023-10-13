@@ -15,7 +15,7 @@ interface CustomRequest extends Request {
 }
 
 @ApiBearerAuth()
-@Controller('nestjs/subscribe')
+@Controller('subscribe')
 @ApiTags('subscribe')
 @UseGuards(AuthGuard)
 export class SubscribeController {

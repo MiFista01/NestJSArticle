@@ -16,7 +16,7 @@ interface CustomRequest extends Request {
 
 @ApiBearerAuth()
 @Controller('article')
-@ApiTags('nestjs/articles')
+@ApiTags('articles')
 // @ApiHeader({name: 'token'})
 @UseGuards(AuthGuard)
 export class ArticlesController {

@@ -16,7 +16,7 @@ interface CustomRequest extends Request {
     valid?: boolean;
 }
 dotenv.config()
-@Controller("nestjs")
+@Controller("")
 @ApiTags('guest')
 export class RegAuthController {
     constructor(

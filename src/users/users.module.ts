@@ -32,7 +32,7 @@ import { commentsSchema } from 'src/schemas/comments.schemas';
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HashPasswordMiddleware).forRoutes({ path: '/nestjs/reg', method: RequestMethod.POST });
-    consumer.apply(HashPasswordMiddleware).forRoutes({ path: '/nestjs/user', method: RequestMethod.PUT });
+    consumer.apply(HashPasswordMiddleware).forRoutes({ path: '/reg', method: RequestMethod.POST });
+    consumer.apply(HashPasswordMiddleware).forRoutes({ path: '/user', method: RequestMethod.PUT });
   }
 }

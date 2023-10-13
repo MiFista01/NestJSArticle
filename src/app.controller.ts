@@ -1,9 +1,8 @@
 import { Controller, Get, Render, Res } from '@nestjs/common';
-import { Response } from 'express';
 import { AppService } from './app.service';
 import { Articles } from './schemas/articles.schemas';
 
-@Controller("nestjs")
+@Controller("")
 export class AppController {
   constructor(private readonly appService: AppService) {}
 

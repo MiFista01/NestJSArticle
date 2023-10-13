@@ -15,7 +15,7 @@ interface CustomRequest extends Request {
 }
 
 @ApiBearerAuth()
-@Controller('nestjs/comment')
+@Controller('comment')
 @ApiTags('comments')
 @UseGuards(AuthGuard)
 export class CommentsController {
